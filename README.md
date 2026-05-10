@@ -1,17 +1,28 @@
-# flutter_pulse_app
+# Pulse
 
-A new Flutter project.
+A Flutter task management app with real-time push notifications.
 
-## Getting Started
+## Overview
 
-This project is a starting point for a Flutter application.
+Pulse is the mobile client for the `task_api` Rust backend. It lets you create, update, and track tasks, and receives push notifications via Firebase Cloud Messaging when tasks change.
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- 📋 Full task CRUD (create, read, update, delete)
+- 🔔 Real-time push notifications (FCM)
+- 🎯 Deep linking from notifications to specific task screens
+- 📱 Foreground & background notification handling
+- 🎨 Custom notification icons (status bar + in-app)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tech Stack
+
+- **Flutter** — UI framework
+- **Riverpod** — State management & dependency injection
+- **GoRouter** — Declarative navigation with deep-link support
+- **Dio** — HTTP client
+- **Firebase Cloud Messaging** — Remote push notifications
+- **flutter_local_notifications** — Foreground notification banners
+
+## Architecture
+
+Clean Architecture with MVVM:

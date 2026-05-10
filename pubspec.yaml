@@ -12,10 +12,39 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
 
+  # State management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Networking  
+  dio: ^5.9.2
+
+  # Routing 
+  go_router: ^17.2.3
+
+  # Firebase 
+  firebase_core: ^4.7.0
+  firebase_messaging: ^16.2.0
+
+  # Local notifications (foreground + tap handling fallback)
+  flutter_local_notifications: ^21.0.0
+
+  # Utilities
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+  equatable: ^2.0.8
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  mocktail: ^1.0.5
+  build_runner: ^2.4.13
+  freezed: ^2.5.8
+  json_serializable: ^6.9.5
+  riverpod_generator: 2.6.4
+  custom_lint: ^0.7.3
+  riverpod_lint: 2.6.4
 
 flutter:
   uses-material-design: true

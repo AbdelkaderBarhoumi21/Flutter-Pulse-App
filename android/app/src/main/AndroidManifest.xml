@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
+    
         android:label="flutter_pulse_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
@@ -30,6 +31,20 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Default notification icon (status bar) -->
+        <meta-data 
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification"/>
+        <!-- Default notification color (tinting on Android 5+) -->
+        <meta-data
+        android:name="com.google.firebase.messaging.default_notification_color"
+        android:resource="@color/notification_color" />
+
+    
+     <!-- Default channel for system-displayed notifications -->
+        <meta-data
+        android:name="com.google.firebase.messaging.default_notification_channel_id"
+        android:value="task_updates" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

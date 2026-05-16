@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_pulse_app/core/utils/enums/task_enums.dart';
 
-enum TaskPriority { low, medium, high }
 
-enum TaskStatus { pending, inProgress, completed }
 
-class Task extends Equatable {
+class TaskEntity extends Equatable {
   final String id;
   final String title;
   final String description;
@@ -13,7 +12,7 @@ class Task extends Equatable {
   final DateTime createdAt;
   final DateTime? completedAt;
 
-  const Task({
+  const TaskEntity({
     required this.id,
     required this.title,
     required this.description,

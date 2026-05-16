@@ -19,11 +19,6 @@ class NetworkFailure extends Failure {
   const NetworkFailure([super.message = 'No internet connection']);
 }
 
-/// Failure when cached data is not available
-class CacheFailure extends Failure {
-  const CacheFailure([super.message = 'Cache error occurred']);
-}
-
 /// Failure when validation fails
 class ValidationFailure extends Failure {
   const ValidationFailure([super.message = 'Validation failed']);

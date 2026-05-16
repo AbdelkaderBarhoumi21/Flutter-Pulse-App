@@ -19,11 +19,6 @@ class NetworkException extends AppException {
   const NetworkException([super.message = 'No internet connection']);
 }
 
-/// Thrown when cached data is not found
-class CacheException extends AppException {
-  const CacheException([super.message = 'Cache error occurred']);
-}
-
 /// Thrown when validation fails
 class ValidationException extends AppException {
   const ValidationException([super.message = 'Validation failed']);

@@ -7,13 +7,13 @@ headers: {
   // Type of content sent in the request body
   'Content-Type': 'application/json',
 
-  // Authentification
+  // Authentication
   'Authorization': 'Bearer eyJhbGciOi...',
 
   // Type of content expected in the response body
   'Accept': 'application/json',
 
-  // Prefered language for the response (if the API supports localization)
+  // Preferred language for the response (if the API supports localization)
   'Accept-Language': 'fr-FR',
 }
 ```

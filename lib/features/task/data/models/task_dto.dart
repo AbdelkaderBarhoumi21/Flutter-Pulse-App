@@ -30,6 +30,16 @@ class TaskDto {
     completedAt: json['completedAt'] as String?,
   );
 
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'description': description,
+    'priority': priority,
+    'status': status,
+    'createdAt': createdAt,
+    'completedAt': completedAt,
+  };
+
   TaskEntity toEntity() => TaskEntity(
     id: id,
     title: title,

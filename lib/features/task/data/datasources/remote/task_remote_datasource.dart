@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_pulse_app/core/errors/app_error_guard.dart';
-import 'package:flutter_pulse_app/core/errors/dio_error_mapper.dart';
 import 'package:flutter_pulse_app/core/network/app_api_endpoints.dart';
-import 'package:flutter_pulse_app/core/network/app_dio_client.dart';
 import 'package:flutter_pulse_app/features/task/data/models/task_dto.dart';
 
 abstract class TaskRemoteDataSource {
@@ -14,54 +12,53 @@ abstract class TaskRemoteDataSource {
 }
 
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
+  final Dio dio;
+  TaskRemoteDataSourceImpl(this.dio);
+
   @override
-  Future<List<TaskDto>> getTasks() async {
-    return AppErrorGuard.guardThrowing<List<TaskDto>>(() async {
-      final response = await AppDioClient.instance.get(
-        AppApiEndpoints.getTasks,
-      );
-      return (response.data as List).map((e) => TaskDto.fromJson(e)).toList();
-    });
+  Future<List<TaskDto>> getTasks() {
+    return AppErrorGuard.guardThrowing(() async {
+      final response = await dio.get(AppApiEndpoints.getTasks);
+      return (response.data as List)
+          .map((e) => TaskDto.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }, parseErrorMessage: 'Failed to parse tasks response');
   }
 
   @override
-  Future<TaskDto> getTaskById(String id) async {
-    return AppErrorGuard.guardThrowing<TaskDto>(() async {
-      final response = await AppDioClient.instance.get(
-        AppApiEndpoints.getTasksById(id),
-      );
-      return TaskDto.fromJson(response.data);
-    });
+  Future<TaskDto> getTaskById(String id) {
+    return AppErrorGuard.guardThrowing(() async {
+      final response = await dio.get(AppApiEndpoints.getTasksById(id));
+      return TaskDto.fromJson(response.data as Map<String, dynamic>);
+    }, parseErrorMessage: 'Failed to parse task response');
   }
 
   @override
-  Future<TaskDto> createTask(TaskDto task) async {
-    return AppErrorGuard.guardThrowing<TaskDto>(() async {
-      final response = await AppDioClient.instance.post(
+  Future<TaskDto> createTask(TaskDto task) {
+    return AppErrorGuard.guardThrowing(() async {
+      final response = await dio.post(
         AppApiEndpoints.createTask,
         data: task.toJson(),
       );
-      return TaskDto.fromJson(response.data);
-    });
+      return TaskDto.fromJson(response.data as Map<String, dynamic>);
+    }, parseErrorMessage: 'Failed to parse create response');
   }
 
   @override
-  Future<TaskDto> updateTask(String id, TaskDto task) async {
-    return AppErrorGuard.guardThrowing<TaskDto>(() async {
-      final response = await AppDioClient.instance.put(
+  Future<TaskDto> updateTask(String id, TaskDto task) {
+    return AppErrorGuard.guardThrowing(() async {
+      final response = await dio.put(
         AppApiEndpoints.updateTask(id),
         data: task.toJson(),
       );
-      return TaskDto.fromJson(response.data);
-    });
+      return TaskDto.fromJson(response.data as Map<String, dynamic>);
+    }, parseErrorMessage: 'Failed to parse update response');
   }
 
   @override
-  Future<void> deleteTask(String id) async {
-    try {
-      await AppDioClient.instance.delete(AppApiEndpoints.deleteTask(id));
-    } on DioException catch (e) {
-      throw DioErrorMapper.map(e);
-    }
+  Future<void> deleteTask(String id) {
+    return AppErrorGuard.guardThrowing(
+      () => dio.delete(AppApiEndpoints.deleteTask(id)),
+    );
   }
 }

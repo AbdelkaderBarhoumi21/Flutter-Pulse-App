@@ -43,3 +43,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase platform config — contains client-side IDs
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+ios/Runner/firebase_app_id_file.json
+macos/Runner/GoogleService-Info.plist
+
+# Generated FlutterFire options — debate: some teams commit, some don't
+# Safest is to commit but ensure App Check + locked Rules are in place
+lib/firebase_options.dart

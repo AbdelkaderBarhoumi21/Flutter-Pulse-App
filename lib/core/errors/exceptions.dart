@@ -23,3 +23,15 @@ class NetworkException extends AppException {
 class ValidationException extends AppException {
   const ValidationException([super.message = 'Validation failed']);
 }
+
+/// Thrown when the user (or the app) cancelled an in-flight request.
+/// Not a real error — the repository should not surface this to the UI.
+class CancelledException extends AppException {
+  const CancelledException([super.message = 'Request was cancelled']);
+}
+
+/// Thrown for anything we couldn't classify (e.g. DioExceptionType.unknown,
+/// TLS / bad certificate failures). The repository maps this to UnexpectedFailure.
+class UnexpectedException extends AppException {
+  const UnexpectedException([super.message = 'Unexpected error occurred']);
+}

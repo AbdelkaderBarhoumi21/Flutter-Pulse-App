@@ -28,3 +28,9 @@ class ValidationFailure extends Failure {
 class UnexpectedFailure extends Failure {
   const UnexpectedFailure([super.message = 'Unexpected error occurred']);
 }
+
+/// Failure when the user (or the app) cancelled an in-flight request.
+/// Not a user-facing error — the ViewModel should usually ignore it.
+class CancelledFailure extends Failure {
+  const CancelledFailure([super.message = 'Request was cancelled']);
+}

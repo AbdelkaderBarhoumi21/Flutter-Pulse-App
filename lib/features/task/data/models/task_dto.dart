@@ -30,6 +30,18 @@ class TaskDto {
     completedAt: json['completedAt'] as String?,
   );
 
+  /// Bridge from domain entity → wire DTO when sending writes.
+  /// Enums become their wire string via `.name`; dates become ISO-8601.
+  factory TaskDto.fromEntity(TaskEntity t) => TaskDto(
+    id: t.id,
+    title: t.title,
+    description: t.description,
+    priority: t.priority.name,
+    status: t.status.name,
+    createdAt: t.createdAt.toIso8601String(),
+    completedAt: t.completedAt?.toIso8601String(),
+  );
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'title': title,

@@ -7,7 +7,7 @@ abstract class TaskRemoteDataSource {
   Future<List<TaskDto>> getTasks();
   Future<TaskDto> getTaskById(String id);
   Future<TaskDto> createTask(TaskDto task);
-  Future<TaskDto> updateTask(String id, TaskDto task);
+  Future<TaskDto> updateTask(TaskDto task);
   Future<void> deleteTask(String id);
 }
 
@@ -45,10 +45,10 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   }
 
   @override
-  Future<TaskDto> updateTask(String id, TaskDto task) {
+  Future<TaskDto> updateTask(TaskDto task) {
     return AppErrorGuard.guardThrowing(() async {
       final response = await dio.put(
-        AppApiEndpoints.updateTask(id),
+        AppApiEndpoints.updateTask(task.id),
         data: task.toJson(),
       );
       return TaskDto.fromJson(response.data as Map<String, dynamic>);

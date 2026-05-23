@@ -24,8 +24,8 @@ class LocalNotificationService {
   Future<void> init() async {
     // ── Per-platform init settings ──────────────────────────────────────
     // Android: default small icon used in the status bar for local notifications.
-    // 'ic_notification_local' refers to res/drawable-*/ic_notification_local.png
-    const android = AndroidInitializationSettings('ic_notification_local');
+    // 'ic_notification' refers to res/drawable-*/ic_notification.png
+    const android = AndroidInitializationSettings('ic_notification');
 
     // iOS/macOS: default permissions (alert + badge + sound = true).
     const ios = DarwinInitializationSettings();
@@ -90,7 +90,7 @@ class LocalNotificationService {
       channelDescription: 'Notifications about task changes',
       importance: Importance.max, // strongest priority for heads-up
       priority: Priority.high, // legacy pre-API 26 priority hint
-      icon: 'ic_notification_local', // small white-on-transparent icon
+      icon: 'ic_notification', // small white-on-transparent icon
     );
 
     // ── iOS-specific render details (defaults are fine here) ────────────

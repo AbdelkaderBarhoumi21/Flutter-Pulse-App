@@ -1,20 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pulse_app/core/di/notifications_services_provider.dart';
+import 'package:flutter_pulse_app/core/notifications/notification_payload.dart';
 import 'package:flutter_pulse_app/core/router/app_routes_names.dart';
+import 'package:flutter_pulse_app/core/router/app_routes_path.dart';
+import 'package:flutter_pulse_app/features/task/presentation/views/screen/task_list_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
-    initialLocation: AppRoutesNames.home,
+    initialLocation: AppRoutesNames.tasksList,
     routes: [
       GoRoute(
-        name: AppRoutesNames.home,
-        path: AppRoutesNames.home,
-        builder: (context, state) => const Placeholder(),
+        name: AppRoutesNames.tasksList,
+        path: AppRoutesNames.tasksList,
+        builder: (context, state) => const TaskListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutesPath.taskDetails,
+        name: AppRoutesNames.taskDetails,
+        builder: (context, state) {
+          final id = state.uri.queryParameters['id']!;
+          return Placeholder();
+        },
       ),
     ],
   );
-  //! Todo:  Bootstrap FCM ONCE the router exists, so taps can navigate.
+  // Backend sends `data: { route: "/task-details", taskId: "uuid", ... }`.
+  // Flutter receives it via `onMessageOpenedApp` (or `getInitialMessage` if cold-started).
+
+  ref
+      .read(fcmServiceProvider)
+      .bootstrap(
+        onTap: (NotificationPayload p) {
+          final route = p.route;
+          final id = p.taskId;
+          if (route == null) return;
+          if (id != null) {
+            // `?` = query params
+            // path: '/tasks/:id'
+            router.go('$route?id=$id');
+          } else {
+            router.go(route);
+          }
+        },
+      );
 
   return router;
 });

@@ -1,6 +1,6 @@
 class AppRoutesPath {
   AppRoutesPath._();
-  static const String home = '/home';
-  static const String login = '/login';
-  static const String register = '/register';
+  static const tasksList = '/tasksList';
+  static const taskDetails =
+      '/taskDetails'; // ← matches backend payload's `route`
 }

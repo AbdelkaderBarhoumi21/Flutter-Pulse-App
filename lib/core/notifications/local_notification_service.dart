@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_pulse_app/core/notifications/notification_payload.dart';
 
+
+
 /// Service that displays native notifications from Dart (foreground case).
 /// FCM does NOT show a banner when the app is in foreground — we render it
 /// here ourselves via flutter_local_notifications.

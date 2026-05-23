@@ -6,7 +6,7 @@ import 'package:flutter_pulse_app/features/task/domain/repositories/task_reposit
 
 class GetTasksUseCase implements UseCase<List<TaskEntity>, NoParams> {
   final TaskRepository repository;
-  GetTasksUseCase({required this.repository});
+  GetTasksUseCase(this.repository);
 
   @override
   Future<Either<Failure, List<TaskEntity>>> call(NoParams params) =>

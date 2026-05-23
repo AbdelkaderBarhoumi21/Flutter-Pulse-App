@@ -37,10 +37,7 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<Either<Failure, TaskEntity>> updateTask(TaskEntity task) {
     return AppErrorGuard.guardEither(() async {
-      final dto = await remoteDataSource.updateTask(
-        task.id,
-        TaskDto.fromEntity(task),
-      );
+      final dto = await remoteDataSource.updateTask(TaskDto.fromEntity(task));
       return dto.toEntity();
     });
   }

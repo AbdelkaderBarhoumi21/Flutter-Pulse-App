@@ -31,6 +31,16 @@ class TasksListViewModel extends AsyncNotifier<List<TaskEntity>> {
     );
   }
 
+  Future<void> editTask(TaskEntity taskEntity) async {
+    final result = await ref
+        .read(updateTaskUseCaseProvider)
+        .call(UpdateTaskParams(taskEntity: taskEntity));
+    result.fold(
+      (failure) => state = AsyncError(failure, StackTrace.current),
+      (_) => refresh(),
+    );
+  }
+
   Future<void> markCompleted(TaskEntity taskEntity) async {
     final updated = TaskEntity(
       id: taskEntity.id,

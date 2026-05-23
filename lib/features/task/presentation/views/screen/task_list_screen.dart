@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pulse_app/core/router/app_routes_path.dart';
+import 'package:flutter_pulse_app/core/router/app_routes_names.dart';
 import 'package:flutter_pulse_app/core/utils/enums/task_enums.dart';
 import 'package:flutter_pulse_app/features/task/presentation/viemodels/task_list_viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +15,7 @@ class TaskListScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Tasks List')),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push(AppRoutesPath.taskForm),
+        onPressed: () => context.pushNamed(AppRoutesNames.taskForm),
         child: const Icon(Icons.add),
       ),
       body: state.when(
@@ -44,8 +44,10 @@ class TaskListScreen extends ConsumerWidget {
                   onPressed: () => notifier.delete(task.id),
                   icon: const Icon(Icons.delete),
                 ),
-                onTap: () =>
-                    context.go('${AppRoutesPath.taskDetails}?id=${task.id}'),
+                onTap: () => context.pushNamed(
+                  AppRoutesNames.taskDetails,
+                  queryParameters: {'id': task.id},
+                ),
               );
             },
           ),

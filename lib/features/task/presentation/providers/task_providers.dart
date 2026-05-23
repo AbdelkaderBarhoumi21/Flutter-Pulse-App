@@ -1,6 +1,4 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_pulse_app/core/di/network_providers.dart';
-import 'package:flutter_pulse_app/core/notifications/fcm_service.dart';
 import 'package:flutter_pulse_app/features/device/data/datasources/device_remote_datasource.dart';
 import 'package:flutter_pulse_app/features/task/data/datasources/remote/task_remote_datasource.dart';
 import 'package:flutter_pulse_app/features/task/data/repositories/task_repository_impl.dart';
@@ -46,4 +44,5 @@ final deleteTaskUseCaseProvider = Provider(
 final deviceRemoteDataSourceProvider = Provider<DeviceRemoteDataSource>(
   (ref) => DeviceRemoteDataSourceImpl(ref.watch(dioProvider)),
 );
+
 

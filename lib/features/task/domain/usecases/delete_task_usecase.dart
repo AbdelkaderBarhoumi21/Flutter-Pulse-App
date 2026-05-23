@@ -4,7 +4,7 @@ import 'package:flutter_pulse_app/core/usecase/usecase.dart';
 import 'package:flutter_pulse_app/features/task/domain/repositories/task_repository.dart';
 
 class DeleteTaskParams {
-  const DeleteTaskParams(this.id);
+  const DeleteTaskParams({required this.id});
   final String id;
 }
 

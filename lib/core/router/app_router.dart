@@ -11,11 +11,11 @@ import 'package:go_router/go_router.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
-    initialLocation: AppRoutesNames.tasksList,
+    initialLocation: AppRoutesPath.tasksList,
     routes: [
       GoRoute(
         name: AppRoutesNames.tasksList,
-        path: AppRoutesNames.tasksList,
+        path: AppRoutesPath.tasksList,
         builder: (context, state) => const TaskListScreen(),
       ),
       GoRoute(

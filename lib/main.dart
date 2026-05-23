@@ -16,11 +16,15 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // onBackgroundMessage tells FCM → "when a message arrives and the app is in background/killed, call this function
-  FirebaseMessaging.onBackgroundMessage(
-    (message) => _firebaseBackgroundHandler(message),
-  );
-  runApp(ProviderScope(child: const MyApp()));
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    // onBackgroundMessage tells FCM → "when a message arrives and the app is in background/killed, call this function
+    FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+  } catch (e, st) {
+    debugPrint('Firebase/FCM init failed (continuing without it): $e\n$st');
+  }
+  runApp(const ProviderScope(child: MyApp()));
 }
 

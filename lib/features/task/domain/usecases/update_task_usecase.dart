@@ -10,9 +10,9 @@ class DeleteTaskParams {
   final String id;
 }
 
-class DeleteTask implements UseCase<void, DeleteTaskParams> {
+class DeleteTaskUseCase implements UseCase<void, DeleteTaskParams> {
 
-  DeleteTask(this._repository);
+  DeleteTaskUseCase(this._repository);
   final TaskRepository _repository;
 
   @override

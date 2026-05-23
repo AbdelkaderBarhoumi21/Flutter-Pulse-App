@@ -10,8 +10,8 @@ class GetTaskByIdParams {
   final String id;
 }
 
-class GetTaskById implements UseCase<TaskEntity, GetTaskByIdParams> {
-  GetTaskById(this._repository);
+class GetTaskByIdUseCase implements UseCase<TaskEntity, GetTaskByIdParams> {
+  GetTaskByIdUseCase(this._repository);
 
   final TaskRepository _repository;
   @override

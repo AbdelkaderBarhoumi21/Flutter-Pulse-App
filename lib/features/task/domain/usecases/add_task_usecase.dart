@@ -10,8 +10,8 @@ class AddTaskParams {
   final TaskEntity taskEntity;
 }
 
-class AddTask implements UseCase<TaskEntity, AddTaskParams> {
-  const AddTask(this._repository);
+class AddTaskUseCase implements UseCase<TaskEntity, AddTaskParams> {
+  const AddTaskUseCase(this._repository);
   final TaskRepository _repository;
 
   @override

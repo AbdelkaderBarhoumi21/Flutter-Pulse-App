@@ -8,13 +8,7 @@ import 'package:flutter_pulse_app/core/notifications/notification_payload.dart';
 /// FCM does NOT show a banner when the app is in foreground — we render it
 /// here ourselves via flutter_local_notifications.
 class LocalNotificationService {
-  // Private constructor: nobody can instantiate this class from outside.
-  LocalNotificationService._();
-
-  // Single shared instance for the whole app (singleton pattern).
-  // One global state — avoids duplicate channels / duplicate tap handlers.
-  static final LocalNotificationService _instance =
-      LocalNotificationService._();
+  LocalNotificationService();
 
   // The plugin object that bridges Dart ↔ native APIs via MethodChannel.
   // Android → NotificationManager, iOS → UNUserNotificationCenter.

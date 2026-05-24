@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_pulse_app/core/di/notifications_services_provider.dart';
 import 'package:flutter_pulse_app/core/notifications/notification_payload.dart';
 import 'package:flutter_pulse_app/core/router/app_routes_names.dart';
@@ -22,7 +23,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutesPath.taskDetails,
         name: AppRoutesNames.taskDetails,
         builder: (context, state) {
-          final taskId = state.uri.queryParameters['id']!;
+          final taskId = state.uri.queryParameters['id'];
+          if (taskId == null || taskId.isEmpty) {
+            return const Scaffold(
+              body: Center(child: Text('Missing task id')),
+            );
+          }
           return TaskDetailsScreen(taskId: taskId);
         },
       ),
@@ -46,10 +52,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final route = p.route;
           final id = p.taskId;
           if (route == null) return;
-          if (id != null) {
-            // `?` = query params
-            // path: '/tasks/:id'
-            router.go('$route?id=$id');
+          // Only the task-details route currently carries an id.
+          if (route == AppRoutesPath.taskDetails && id != null) {
+            router.goNamed(
+              AppRoutesNames.taskDetails,
+              queryParameters: {'id': id},
+            );
           } else {
             router.go(route);
           }

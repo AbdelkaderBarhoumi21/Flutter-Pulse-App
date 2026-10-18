@@ -1,30 +1,33 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_pulse_app/core/app/app.dart';
-import 'package:flutter_pulse_app/firebase_options.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_pulse_app/app/pulse_app.dart';
+import 'package:flutter_pulse_app/core/notifications/firebase_initializer.dart';
+import 'package:flutter_pulse_app/core/notifications/notification_providers.dart';
+import 'package:flutter_pulse_app/core/storage/shared_preferences_provider.dart';
+import 'package:flutter_pulse_app/features/device/presentation/providers/device_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-/// MUST be a top-level function (not a method) and annotated.
-@pragma('vm:entry-point')
-Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // Background isolate has no UI — keep this minimal. We rely on the system
-  // tray notification (FCM payload's `notification` block) to be shown by Android.
-  // No need to call flutter_local_notifications here unless you want custom UI.
-}
-
+/// Bootstrap only: platform services, dependency bindings, `runApp`.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    // onBackgroundMessage tells FCM → "when a message arrives and the app is in background/killed, call this function
-    FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
-  } catch (e, st) {
-    debugPrint('Firebase/FCM init failed (continuing without it): $e\n$st');
-  }
-  runApp(const ProviderScope(child: MyApp()));
-}
 
+  final (firebaseAvailable, preferences) = await (
+    FirebaseInitializer.initialize(),
+    SharedPreferences.getInstance(),
+  ).wait;
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        firebaseAvailableProvider.overrideWithValue(firebaseAvailable),
+        sharedPreferencesProvider.overrideWithValue(preferences),
+        // Core's push layer depends on the PushTokenRegistrar port; the
+        // device feature implements it. Bound here, at the composition root.
+        pushTokenRegistrarProvider.overrideWith(
+          (ref) => ref.watch(registerDeviceUseCaseProvider),
+        ),
+      ],
+      child: const PulseApp(),
+    ),
+  );
+}

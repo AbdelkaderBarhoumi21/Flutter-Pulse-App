@@ -1,24 +1,34 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_pulse_app/core/config/app_env.dart';
+import 'package:flutter_pulse_app/core/utils/app_logger.dart';
 
-/// Factory for building a configured [Dio] instance.
-///
-/// This class is a namespace — never instantiated. It builds the Dio;
-/// the [Dio] itself is owned and shared by [dioProvider] in the DI layer,
-/// so datasources receive it via constructor injection (testable + explicit).
-class AppDioClient {
-  const AppDioClient._();
+/// Builds the configured [Dio]. The instance itself is owned by
+/// `dioProvider`, and datasources receive it through their constructor.
+abstract final class AppDioClient {
+  static const Duration _timeout = Duration(seconds: 10);
 
-  static Dio create() {
+  static Dio create({
+    String baseUrl = AppEnv.apiBaseUrl,
+    bool enableLogs = AppEnv.enableHttpLogs,
+  }) {
     final dio = Dio(
       BaseOptions(
-        connectTimeout: const Duration(seconds: 5),
-        receiveTimeout: const Duration(seconds: 5),
-        headers: {'content-type': 'application/json'},
+        baseUrl: baseUrl,
+        connectTimeout: _timeout,
+        receiveTimeout: _timeout,
+        contentType: Headers.jsonContentType,
+        headers: {Headers.acceptHeader: Headers.jsonContentType},
       ),
     );
-    dio.interceptors.add(
-      LogInterceptor(requestBody: true, responseBody: true),
-    );
+    if (enableLogs) {
+      dio.interceptors.add(
+        LogInterceptor(
+          requestBody: true,
+          responseBody: true,
+          logPrint: (line) => AppLogger.debug(line.toString()),
+        ),
+      );
+    }
     return dio;
   }
 }

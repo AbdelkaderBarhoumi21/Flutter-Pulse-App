@@ -1,14 +1,7 @@
-class AppApiEndpoints {
-  AppApiEndpoints._();
-  static const String baseUrl =
-      'http://10.0.2.2:3000'; // localhost for Android emulator
+/// REST paths, relative to `AppEnv.apiBaseUrl` (set as Dio's `baseUrl`).
+abstract final class AppApiEndpoints {
+  static const String tasks = '/tasks';
+  static String task(String id) => '/tasks/${Uri.encodeComponent(id)}';
 
-  static const String getTasks = '$baseUrl/tasks';
-  static const String createTask = '$baseUrl/tasks';
-  static String getTasksById(String id) => '$baseUrl/tasks/$id';
-  static String deleteTask(String id) => '$baseUrl/tasks/$id';
-  static String updateTask(String id) => '$baseUrl/tasks/$id';
-
-  // ← add devices endpoint
-  static const String registerDevice = '$baseUrl/devices';
+  static const String devices = '/devices';
 }

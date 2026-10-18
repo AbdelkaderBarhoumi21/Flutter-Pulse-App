@@ -1,30 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_pulse_app/core/errors/exceptions.dart';
 
-/// Translates [DioException]s into our [AppException] hierarchy so the
-/// repository layer can map them to typed [Failure]s without knowing Dio.
-class DioErrorMapper {
-  const DioErrorMapper._();
-
+/// Translates [DioException]s into the [AppException] hierarchy so the rest
+/// of the app never depends on Dio.
+abstract final class DioErrorMapper {
   static AppException map(DioException e) {
-    switch (e.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-      case DioExceptionType.connectionError:
-        return const NetworkException();
-
-      case DioExceptionType.badResponse:
-        return ServerException(
-          'Server error: ${e.response?.statusCode ?? "Unknown status code"}',
-        );
-
-      case DioExceptionType.cancel:
-        return const CancelledException();
-
-      case DioExceptionType.badCertificate:
-      case DioExceptionType.unknown:
-        return UnexpectedException(e.message ?? 'Unexpected error occurred');
-    }
+    return switch (e.type) {
+      DioExceptionType.connectionTimeout ||
+      DioExceptionType.sendTimeout ||
+      DioExceptionType.receiveTimeout ||
+      DioExceptionType.connectionError => const NetworkException(),
+      DioExceptionType.badResponse => ServerException(
+        'Server error: ${e.response?.statusCode ?? 'unknown status code'}',
+      ),
+      DioExceptionType.cancel => const CancelledException(),
+      DioExceptionType.badCertificate || DioExceptionType.unknown =>
+        UnexpectedException(e.message ?? 'Unexpected error occurred'),
+    };
   }
 }

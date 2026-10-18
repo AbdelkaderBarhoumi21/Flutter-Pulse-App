@@ -1,37 +1,34 @@
-// [] optional POSITIONAL parameters
-//{} optional NAMED parameters
-
-/// Base exception class for all custom exceptions
-/// implements = implement a contract/interface
-abstract class AppException implements Exception {
+/// Exceptions thrown by datasources. Repositories turn them into [Failure]s
+/// (see `AppErrorGuard.guardEither`), so they never reach the UI.
+sealed class AppException implements Exception {
   const AppException(this.message);
   final String message;
+
+  @override
+  String toString() => '$runtimeType: $message';
 }
 
-/// Thrown when server returns an error response
-// extends = inherit (parent-child relationship)
+/// The server answered with an error status code.
 class ServerException extends AppException {
-  const ServerException([super.message = 'Server not occured']);
+  const ServerException([super.message = 'Server error occurred']);
 }
 
-/// Thrown when there's no internet connection
+/// No connection, or the request timed out.
 class NetworkException extends AppException {
   const NetworkException([super.message = 'No internet connection']);
 }
 
-/// Thrown when validation fails
+/// Input rejected by business rules.
 class ValidationException extends AppException {
   const ValidationException([super.message = 'Validation failed']);
 }
 
-/// Thrown when the user (or the app) cancelled an in-flight request.
-/// Not a real error — the repository should not surface this to the UI.
+/// The request was cancelled. Not a real error — don't surface it to users.
 class CancelledException extends AppException {
   const CancelledException([super.message = 'Request was cancelled']);
 }
 
-/// Thrown for anything we couldn't classify (e.g. DioExceptionType.unknown,
-/// TLS / bad certificate failures). The repository maps this to UnexpectedFailure.
+/// Anything we couldn't classify: malformed payloads, TLS failures, etc.
 class UnexpectedException extends AppException {
   const UnexpectedException([super.message = 'Unexpected error occurred']);
 }

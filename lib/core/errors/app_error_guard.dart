@@ -4,20 +4,13 @@ import 'package:flutter_pulse_app/core/errors/dio_error_mapper.dart';
 import 'package:flutter_pulse_app/core/errors/exceptions.dart';
 import 'package:flutter_pulse_app/core/errors/failures.dart';
 
-/// Utility (namespace) class — never instantiated.
-/// Centralizes the two error-handling boundaries in the app:
-/// There's no object anywhere. AppErrorGuard is just a label that groups two functions.
-/// Dart never allocates anything called "an AppErrorGuard."
-/// * [guardThrowing] — used by **datasources**. Runs [body] and re-throws
-///   any failure as a typed [AppException] (so the repository can map it).
+/// The two error-handling boundaries of the data layer.
 ///
-/// * [guardEither] — used by **repositories**. Runs [body] and converts any
-///   thrown [AppException] into the matching [Failure], returned as
-///   `Either<Failure, T>`. Repositories never throw — they return.
-class AppErrorGuard {
-  const AppErrorGuard._();
-
-  /// Datasource-side guard. Returns `T` on success, throws [AppException] on
+/// * [guardThrowing] — used by **datasources**: anything that goes wrong is
+///   re-thrown as a typed [AppException].
+/// * [guardEither] — used by **repositories**: [AppException]s become the
+///   matching [Failure] in a `Left`. Repositories never throw.
+abstract final class AppErrorGuard {
   static Future<T> guardThrowing<T>(
     Future<T> Function() body, {
     String parseErrorMessage = 'Failed to parse response',
@@ -28,28 +21,25 @@ class AppErrorGuard {
       rethrow;
     } on DioException catch (e) {
       throw DioErrorMapper.map(e);
-    } catch (_) {
-      throw ValidationException(parseErrorMessage);
+    } catch (e) {
+      // Malformed payloads (bad casts, unknown enum values, bad dates…).
+      throw UnexpectedException('$parseErrorMessage: $e');
     }
   }
 
-  /// Repository-side guard. Returns `Right(T)` on success and `Left(Failure)`
   static Future<Either<Failure, T>> guardEither<T>(
     Future<T> Function() body,
   ) async {
     try {
-      final result = await body();
-      return Right(result);
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
-    } on ValidationException catch (e) {
-      return Left(ValidationFailure(e.message));
-    } on CancelledException catch (e) {
-      return Left(CancelledFailure(e.message));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+      return Right(await body());
+    } on AppException catch (e) {
+      return Left(switch (e) {
+        NetworkException() => NetworkFailure(e.message),
+        ServerException() => ServerFailure(e.message),
+        ValidationException() => ValidationFailure(e.message),
+        CancelledException() => CancelledFailure(e.message),
+        UnexpectedException() => UnexpectedFailure(e.message),
+      });
     } catch (e) {
       return Left(UnexpectedFailure(e.toString()));
     }

@@ -1,6 +1,6 @@
-import 'package:flutter_pulse_app/core/di/network_providers.dart';
-import 'package:flutter_pulse_app/features/device/data/datasources/device_remote_datasource.dart';
-import 'package:flutter_pulse_app/features/task/data/datasources/remote/task_remote_datasource.dart';
+import 'package:flutter_pulse_app/core/network/network_providers.dart';
+import 'package:flutter_pulse_app/features/task/data/datasources/task_remote_datasource.dart';
+import 'package:flutter_pulse_app/features/task/data/datasources/task_remote_datasource_impl.dart';
 import 'package:flutter_pulse_app/features/task/data/repositories/task_repository_impl.dart';
 import 'package:flutter_pulse_app/features/task/domain/repositories/task_repository.dart';
 import 'package:flutter_pulse_app/features/task/domain/usecases/add_task_usecase.dart';
@@ -10,39 +10,35 @@ import 'package:flutter_pulse_app/features/task/domain/usecases/get_tasks_usecas
 import 'package:flutter_pulse_app/features/task/domain/usecases/update_task_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// ─── Task — data layer ───────────────────────────────────────────────────────
-//  <TaskRemoteDataSource> => It tells Riverpod (and the rest of your code) that this provider
-// exposes the abstract interface TaskRemoteDataSource, not the concrete TaskRemoteDataSourceImpl
-final taskRemoteDataSourceProvider = Provider<TaskRemoteDataSource>((ref) {
-  return TaskRemoteDataSourceImpl(ref.read(dioProvider));
-});
+// Dependency wiring for the task feature. Each provider exposes an
+// abstraction, so tests can override any layer.
+
+// ─── Data ────────────────────────────────────────────────────────────────────
+final taskRemoteDataSourceProvider = Provider<TaskRemoteDataSource>(
+  (ref) => TaskRemoteDataSourceImpl(ref.watch(dioProvider)),
+);
 
 final taskRepositoryProvider = Provider<TaskRepository>(
-  (ref) => TaskRepositoryImpl(
-    remoteDataSource: ref.read(taskRemoteDataSourceProvider),
-  ),
+  (ref) => TaskRepositoryImpl(ref.watch(taskRemoteDataSourceProvider)),
 );
 
-// ─── Task — usecases ─────────────────────────────────────────────────────────
-final getTasksUseCaseProvider = Provider(
+// ─── Use cases ───────────────────────────────────────────────────────────────
+final getTasksUseCaseProvider = Provider<GetTasksUseCase>(
   (ref) => GetTasksUseCase(ref.watch(taskRepositoryProvider)),
 );
-final getTaskByIdUseCaseProvider = Provider(
+
+final getTaskByIdUseCaseProvider = Provider<GetTaskByIdUseCase>(
   (ref) => GetTaskByIdUseCase(ref.watch(taskRepositoryProvider)),
 );
-final addTaskUseCaseProvider = Provider(
+
+final addTaskUseCaseProvider = Provider<AddTaskUseCase>(
   (ref) => AddTaskUseCase(ref.watch(taskRepositoryProvider)),
 );
-final updateTaskUseCaseProvider = Provider(
+
+final updateTaskUseCaseProvider = Provider<UpdateTaskUseCase>(
   (ref) => UpdateTaskUseCase(ref.watch(taskRepositoryProvider)),
 );
-final deleteTaskUseCaseProvider = Provider(
+
+final deleteTaskUseCaseProvider = Provider<DeleteTaskUseCase>(
   (ref) => DeleteTaskUseCase(ref.watch(taskRepositoryProvider)),
 );
-
-// ─── Devices ─────────────────────────────────────────────────────────────────
-final deviceRemoteDataSourceProvider = Provider<DeviceRemoteDataSource>(
-  (ref) => DeviceRemoteDataSourceImpl(ref.watch(dioProvider)),
-);
-
-

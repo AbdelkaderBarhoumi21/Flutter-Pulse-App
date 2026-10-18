@@ -1,13 +1,13 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_pulse_app/core/errors/failures.dart';
 import 'package:flutter_pulse_app/core/usecase/usecase.dart';
-import 'package:flutter_pulse_app/core/utils/validators/app_validators.dart';
 import 'package:flutter_pulse_app/features/task/domain/entities/task_entity.dart';
 import 'package:flutter_pulse_app/features/task/domain/repositories/task_repository.dart';
+import 'package:flutter_pulse_app/features/task/domain/validators/task_validator.dart';
 
 class AddTaskParams {
-  const AddTaskParams({required this.taskEntity});
-  final TaskEntity taskEntity;
+  const AddTaskParams({required this.task});
+  final TaskEntity task;
 }
 
 class AddTaskUseCase implements UseCase<TaskEntity, AddTaskParams> {
@@ -16,18 +16,8 @@ class AddTaskUseCase implements UseCase<TaskEntity, AddTaskParams> {
 
   @override
   Future<Either<Failure, TaskEntity>> call(AddTaskParams params) async {
-    final titleError = AppValidators.validateTitle(params.taskEntity.title);
-    final descError = AppValidators.validateDescription(
-      params.taskEntity.description,
-    );
-    if (titleError != null) {
-      return Left(ValidationFailure(titleError));
-    }
-
-    if (descError != null) {
-      return Left(ValidationFailure(descError));
-    }
-
-    return _repository.addTask(params.taskEntity);
+    final error = TaskValidator.validateContent(params.task);
+    if (error != null) return Left(ValidationFailure(error));
+    return _repository.addTask(params.task);
   }
 }

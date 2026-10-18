@@ -1,16 +1,10 @@
-import 'package:flutter_pulse_app/core/utils/enums/task_enums.dart';
 import 'package:flutter_pulse_app/features/task/domain/entities/task_entity.dart';
+import 'package:flutter_pulse_app/features/task/domain/entities/task_priority.dart';
+import 'package:flutter_pulse_app/features/task/domain/entities/task_status.dart';
 
+/// Wire format of a task. Enums travel as their `name`, dates as ISO-8601.
 class TaskDto {
-  final String id;
-  final String title;
-  final String description;
-  final String priority; // "low" | "medium" | "high"
-  final String status; // "pending" | "inProgress" | "completed"
-  final String createdAt; // ISO string
-  final String? completedAt;
-
-  TaskDto({
+  const TaskDto({
     required this.id,
     required this.title,
     required this.description,
@@ -23,24 +17,30 @@ class TaskDto {
   factory TaskDto.fromJson(Map<String, dynamic> json) => TaskDto(
     id: json['id'] as String,
     title: json['title'] as String,
-    description: json['description'] as String,
+    description: json['description'] as String? ?? '',
     priority: json['priority'] as String,
     status: json['status'] as String,
     createdAt: json['createdAt'] as String,
     completedAt: json['completedAt'] as String?,
   );
 
-  /// Bridge from domain entity → wire DTO when sending writes.
-  /// Enums become their wire string via `.name`; dates become ISO-8601.
-  factory TaskDto.fromEntity(TaskEntity t) => TaskDto(
-    id: t.id,
-    title: t.title,
-    description: t.description,
-    priority: t.priority.name,
-    status: t.status.name,
-    createdAt: t.createdAt.toIso8601String(),
-    completedAt: t.completedAt?.toIso8601String(),
+  factory TaskDto.fromEntity(TaskEntity task) => TaskDto(
+    id: task.id,
+    title: task.title,
+    description: task.description,
+    priority: task.priority.name,
+    status: task.status.name,
+    createdAt: task.createdAt.toIso8601String(),
+    completedAt: task.completedAt?.toIso8601String(),
   );
+
+  final String id;
+  final String title;
+  final String description;
+  final String priority; // "low" | "medium" | "high"
+  final String status; // "pending" | "inProgress" | "completed"
+  final String createdAt;
+  final String? completedAt;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -52,13 +52,15 @@ class TaskDto {
     'completedAt': completedAt,
   };
 
+  /// Throws on unknown enum values or bad dates; the datasource guard turns
+  /// that into an `UnexpectedException`.
   TaskEntity toEntity() => TaskEntity(
     id: id,
     title: title,
     description: description,
-    priority: TaskPriority.fromApi(priority),
-    status: TaskStatus.fromApi(status),
+    priority: TaskPriority.values.byName(priority),
+    status: TaskStatus.values.byName(status),
     createdAt: DateTime.parse(createdAt),
-    completedAt: completedAt != null ? DateTime.parse(completedAt!) : null,
+    completedAt: completedAt == null ? null : DateTime.parse(completedAt!),
   );
 }

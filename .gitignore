@@ -53,3 +53,6 @@ macos/Runner/GoogleService-Info.plist
 # Generated FlutterFire options — debate: some teams commit, some don't
 # Safest is to commit but ensure App Check + locked Rules are in place
 lib/firebase_options.dart
+
+# Local environment values (see .env.example)
+.env
